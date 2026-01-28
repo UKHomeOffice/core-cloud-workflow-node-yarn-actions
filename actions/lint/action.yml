@@ -1,0 +1,33 @@
+name: Node yarn lint
+description: "Run yarn lint on the project after dependencies have been installed."
+
+inputs:
+  working_directory:
+    description: "Directory to run yarn lint in (default: repository root)"
+    required: false
+    type: string
+    default: "."
+
+outputs:
+  yarn_lint_exit_code:
+    description: "The exit code from the yarn lint command"
+    value: ${{ steps.yarn_lint.outputs.exit_code }}
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v6
+
+    - name: Run yarn lint
+      id: yarn_lint
+      shell: bash
+      working-directory: ${{ inputs.working_directory }}
+      run: |
+        set +e
+        yarn run lint
+        EXIT_CODE=$?
+        set -e
+        
+        echo "exit_code=$EXIT_CODE" >> $GITHUB_OUTPUT

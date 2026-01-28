@@ -1,0 +1,46 @@
+name: Node yarn publish
+description: "Publish the project using yarn after setting up Node.js and installing dependencies."
+
+inputs:
+  working_directory:
+    description: "Directory to run yarn publish in (default: repository root)"
+    required: false
+    type: string
+    default: "."
+
+  access_level:
+    description: "The access level for the yarn package (e.g., public or restricted)"
+    required: false
+    type: string
+    default: "public"
+
+  node_access_token:
+    description: "The yarn access token to authenticate publishing"
+    required: true
+    type: string
+
+outputs:
+  yarn_publish_exit_code:
+    description: "The exit code from the yarn publish command"
+    value: ${{ steps.yarn_publish.outputs.exit_code }}
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v6
+
+    - name: Run yarn publish
+      id: yarn_publish
+      shell: bash
+      working-directory: ${{ inputs.working_directory }}
+      env:
+        NODE_AUTH_TOKEN: ${{ inputs.node_access_token }}
+      run: |
+        set +e
+        yarn publish --access=${{ inputs.access_level }}
+        EXIT_CODE=$?
+        set -e
+        
+        echo "exit_code=$EXIT_CODE" >> $GITHUB_OUTPUT

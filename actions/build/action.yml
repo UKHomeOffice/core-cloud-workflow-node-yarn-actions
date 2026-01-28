@@ -1,0 +1,33 @@
+name: Node yarn build
+description: "Build the project using yarn after setting up Node.js and installing dependencies."
+
+inputs:
+  working_directory:
+    description: "Directory to run yarn build in (default: repository root)"
+    required: false
+    type: string
+    default: "."
+
+outputs:
+  yarn_build_exit_code:
+    description: "The exit code from the yarn build command"
+    value: ${{ steps.yarn_build.outputs.exit_code }}
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v6
+
+    - name: Run yarn build
+      id: yarn_build
+      shell: bash
+      working-directory: ${{ inputs.working_directory }}
+      run: |
+        set +e
+        yarn run build
+        EXIT_CODE=$?
+        set -e
+        
+        echo "exit_code=$EXIT_CODE" >> $GITHUB_OUTPUT

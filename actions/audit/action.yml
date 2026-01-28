@@ -1,0 +1,54 @@
+name: Node yarn audit
+description: "Run yarn audit on the project after dependencies have been installed."
+
+inputs:
+  working_directory:
+    description: "Directory to run yarn audit in (default: repository root)"
+    required: false
+    type: string
+    default: "."
+
+  audit_level:
+    description: "The minimum level of vulnerability for yarn audit to exit with a non-zero exit code (eg info, low, moderate, high, critical, or none)"
+    required: false
+    type: string
+    default: "low"
+
+outputs:
+  yarn_audit_exit_code:
+    description: "The exit code from the yarn audit command"
+    value: ${{ steps.yarn_audit.outputs.exit_code }}
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v6
+
+    - name: Setup Node
+      uses: actions/setup-node@v6
+      with:
+        node-version: ${{ inputs.node_version }}
+
+    - name: Setup Yarn
+      uses: actions/setup-node@v6
+      with:
+        node-version: ${{ inputs.node_version }}
+
+    - name: Install Node Dependencies
+      shell: bash
+      working-directory: ${{ inputs.working_directory }}
+      run: yarn install --frozen-lockfile
+
+    - name: Run yarn audit
+      id: yarn_audit
+      shell: bash
+      working-directory: ${{ inputs.working_directory }}
+      run: |
+        set +e
+        yarn audit --level ${{ inputs.audit_level }}
+        EXIT_CODE=$?
+        set -e
+
+        echo "exit_code=$EXIT_CODE" >> $GITHUB_OUTPUT
