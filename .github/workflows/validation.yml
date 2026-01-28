@@ -1,0 +1,79 @@
+name: Auditing, linting and testing your Node yarn project
+
+on:
+  workflow_call:
+    inputs:
+      working_directory:
+        description: "Directory to run yarn audit in (default: repository root)"
+        required: false
+        type: string
+        default: "."
+
+      node_version:
+        description: "Node version to install (e.g., 24)"
+        required: false
+        type: string
+        default: "24"
+      
+      audit_level:
+        description: "The minimum level of vulnerability for yarn audit to exit with a non-zero exit code (eg info, low, moderate, high, critical, or none)"
+        required: false
+        type: string
+        default: "low"
+      
+      post_install_script:
+        description: "Optional script to run after yarn install"
+        required: false
+        type: string
+        default: ""
+    
+    outputs:
+      yarn_audit_exit_code:
+        description: "The exit code from the yarn audit command"
+        value: ${{ jobs.validation.outputs.yarn_audit_exit_code }}
+      yarn_lint_exit_code:
+        description: "The exit code from the yarn lint command"
+        value: ${{ jobs.validation.outputs.yarn_lint_exit_code }}
+      yarn_test_exit_code:
+        description: "The exit code from the yarn test command"
+        value: ${{ jobs.validation.outputs.yarn_test_exit_code }}
+
+jobs:
+  validation:
+    name: "Run yarn audit, lint, and test"
+    runs-on: ubuntu-latest
+
+    outputs:
+      yarn_audit_exit_code: ${{ steps.run_audit.outputs.yarn_audit_exit_code }}
+      yarn_lint_exit_code: ${{ steps.run_lint.outputs.yarn_lint_exit_code }}
+      yarn_test_exit_code: ${{ steps.run_test.outputs.yarn_test_exit_code }}
+
+    steps: 
+      - name: Checkout Code
+        uses: actions/checkout@v6
+      
+      - name: Set up node and deps
+        uses: ./actions/setup
+        with:
+          working_directory: ${{ inputs.working_directory }}
+          node_version: ${{ inputs.node_version }}
+
+      - name: Run yarn audit
+        uses: ./actions/audit
+        id: run_audit
+        with:
+          working_directory: ${{ inputs.working_directory }}
+          audit_level: ${{ inputs.audit_level }}
+      
+      - name: Run yarn lint
+        uses: ./actions/lint
+        id: run_lint
+        with:
+          working_directory: ${{ inputs.working_directory }}
+      
+      - name: Run yarn test
+        uses: ./actions/test
+        id: run_test
+        with:
+          working_directory: ${{ inputs.working_directory }}
+          post_install_script: ${{ inputs.post_install_script }}

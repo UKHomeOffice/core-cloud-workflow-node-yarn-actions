@@ -1,0 +1,54 @@
+name: Building and then publishing Node yarn project
+
+on:
+  workflow_call:
+    inputs:
+      working_directory:
+        description: "Directory to run yarn audit in (default: repository root)"
+        required: false
+        type: string
+        default: "."
+
+      node_version:
+        description: "Node version to install (e.g., 24)"
+        required: false
+        type: string
+        default: "24"
+
+      should_publish:
+        description: "Should the project be published"
+        required: false
+        type: boolean
+        default: false
+    
+    secrets:
+      node_access_token:
+        description: "The yarn access token to authenticate publishing"
+        required: false
+
+jobs:
+  build-publish:
+    name: "Run"
+    runs-on: ubuntu-latest
+
+    steps: 
+      - name: Checkout Code
+        uses: actions/checkout@v6
+      
+      - name: Set up node and deps
+        uses: ./actions/setup
+        with:
+          working_directory: ${{ inputs.working_directory }}
+          node_version: ${{ inputs.node_version }}
+
+      - name: Run yarn build
+        uses: ./actions/build
+        with:
+          working_directory: ${{ inputs.working_directory }}
+      
+      - name: Run yarn publish
+        if: ${{ inputs.should_publish }}
+        uses: ./actions/publish
+        with:
+          working_directory: ${{ inputs.working_directory }}
+          node_access_token: ${{ secrets.node_access_token }}
