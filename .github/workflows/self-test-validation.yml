@@ -1,0 +1,94 @@
+name: Self Test - validation workflows
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  test-validation-workflow:
+    uses: ./.github/workflows/validation.yml
+    with:
+      working_directory: "./tests/valid-app"
+      post_install_script: "npx playwright install --with-deps"
+
+  test-audit-invalid:
+    name: Test - Invalid Node yarn audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up node and deps
+        uses: ./actions/setup
+        with:
+          working_directory: "./tests/audit-invalid"
+
+      - name: Run yarn audit (invalid config)
+        id: audit
+        uses: ./actions/audit
+        continue-on-error: true
+        with:
+          working_directory: "./tests/audit-invalid"
+
+      - name: Assert failure
+        run: |
+          if [ "${{ steps.audit.outputs.yarn_audit_exit_code }}" -eq 0 ]; then
+            echo "Expected yarn audit to fail but it succeeded."
+            exit 1
+          fi
+
+  test-lint-invalid:
+    name: Test - Invalid Node yarn lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up node and deps
+        uses: ./actions/setup
+        with:
+          working_directory: "./tests/lint-invalid"
+
+      - name: Run yarn lint (invalid config)
+        id: lint
+        uses: ./actions/lint
+        continue-on-error: true
+        with:
+          working_directory: "./tests/lint-invalid"
+
+      - name: Assert failure
+        run: |
+          if [ "${{ steps.lint.outputs.yarn_lint_exit_code }}" -eq 0 ]; then
+            echo "Expected yarn lint to fail but it succeeded."
+            exit 1
+          fi
+
+  test-test-invalid:
+    name: Test - Invalid Node yarn test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up node and deps
+        uses: ./actions/setup
+        with:
+          working_directory: "./tests/test-invalid"
+
+      - name: Run yarn test (invalid config)
+        id: test
+        uses: ./actions/test
+        continue-on-error: true
+        with:
+          working_directory: "./tests/test-invalid"
+          post_install_script: "npx playwright install --with-deps"
+
+      - name: Assert failure
+        run: |
+          if [ "${{ steps.test.outputs.yarn_test_exit_code }}" -eq 0 ]; then
+            echo "Expected yarn test to fail but it succeeded."
+            exit 1
+          fi

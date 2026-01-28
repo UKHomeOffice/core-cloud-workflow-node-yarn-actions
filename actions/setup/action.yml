@@ -1,5 +1,5 @@
 name: Node yarn setup
-description: description: "Set up Node.js environment and install dependencies."
+description: "Set up Node.js environment and install dependencies."
 
 inputs:
   working_directory:
