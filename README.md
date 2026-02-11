@@ -41,6 +41,7 @@ jobs:
             working_directory: "."
             node_version: "24"
             should_publish: false
+            registry_url: ""
         secrets:
             node_access_token: ${{ secrets.NODE_ACCESS_TOKEN }}
 ```
