@@ -59,20 +59,20 @@ jobs:
           node_version: ${{ inputs.node_version }}
 
       - name: Run yarn audit
-        uses: UKHomeOffice/core-cloud-workflow-node-npm-actions/actions/audit@main
+        uses: UKHomeOffice/core-cloud-workflow-node-yarn-actions/actions/audit@main
         id: run_audit
         with:
           working_directory: ${{ inputs.working_directory }}
           audit_level: ${{ inputs.audit_level }}
       
       - name: Run yarn lint
-        uses: UKHomeOffice/core-cloud-workflow-node-npm-actions/actions/lint@main
+        uses: UKHomeOffice/core-cloud-workflow-node-yarn-actions/actions/lint@main
         id: run_lint
         with:
           working_directory: ${{ inputs.working_directory }}
       
       - name: Run yarn test
-        uses: UKHomeOffice/core-cloud-workflow-node-npm-actions/actions/test@main
+        uses: UKHomeOffice/core-cloud-workflow-node-yarn-actions/actions/test@main
         id: run_test
         with:
           working_directory: ${{ inputs.working_directory }}
