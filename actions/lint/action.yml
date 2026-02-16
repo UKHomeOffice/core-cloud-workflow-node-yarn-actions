@@ -17,9 +17,6 @@ runs:
   using: "composite"
 
   steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v6
-
     - name: Run yarn lint
       id: yarn_lint
       shell: bash

@@ -28,9 +28,6 @@ runs:
   using: "composite"
 
   steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v6
-
     - name: Run yarn publish
       id: yarn_publish
       shell: bash

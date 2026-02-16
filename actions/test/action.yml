@@ -23,9 +23,6 @@ runs:
   using: "composite"
 
   steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v6
-
     - name: Run Post-Install Script
       if: ${{ inputs.post_install_script != '' }}
       shell: bash
