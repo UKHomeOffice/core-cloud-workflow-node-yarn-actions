@@ -15,7 +15,7 @@ inputs:
     default: "24"
 
   registry_url:
-    description: "The npm registry URL to publish to"
+    description: "The yarn registry URL to publish to"
     required: false
     type: string
     default: ""
