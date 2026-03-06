@@ -27,9 +27,11 @@ runs:
       if: ${{ inputs.post_install_script != '' }}
       shell: bash
       working-directory: ${{ inputs.working_directory }}
+      env:
+        POST_INSTALL_SCRIPT: ${{ inputs.post_install_script }}
       run: |
         echo "Running post-install script..."
-        eval "${{ inputs.post_install_script }}"
+        eval "${POST_INSTALL_SCRIPT}"
 
     - name: Run yarn test
       id: yarn_test

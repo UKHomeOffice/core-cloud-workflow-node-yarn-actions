@@ -11,7 +11,10 @@ inputs:
   access_level:
     description: "The access level for the yarn package (e.g., public or restricted)"
     required: false
-    type: string
+    type: choice
+    options:
+      - public
+      - restricted
     default: "public"
 
   node_access_token:

@@ -11,7 +11,12 @@ inputs:
   audit_level:
     description: "The minimum level of vulnerability for yarn audit to exit with a non-zero exit code (eg info, low, moderate, high, critical, or none)"
     required: false
-    type: string
+    type: choice
+    options:
+      - low
+      - moderate
+      - high
+      - critical
     default: "low"
 
 outputs:
