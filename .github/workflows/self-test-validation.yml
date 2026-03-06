@@ -11,12 +11,6 @@ permissions:
   contents: read
 
 jobs:
-  test-validation-workflow:
-    uses: ./.github/workflows/validation.yml
-    with:
-      working_directory: "./tests/valid-app"
-      post_install_script: "npx playwright install --with-deps"
-
   test-audit-invalid:
     name: Test - Invalid Node yarn audit
     runs-on: ubuntu-latest

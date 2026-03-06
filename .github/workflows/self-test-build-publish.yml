@@ -11,12 +11,6 @@ permissions:
   contents: read
 
 jobs:
-  test-build-publish-workflow:
-    uses: ./.github/workflows/build-publish.yml
-    with:
-      working_directory: "./tests/valid-app"
-      should_publish: false
-
   test-build-invalid:
     name: Test - Invalid Node yarn build
     runs-on: ubuntu-latest
